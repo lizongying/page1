@@ -1,0 +1,103 @@
+<!-- Copyright 2000-2023 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license. -->
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+
+<idea-plugin>
+
+    <!-- Unique id for this plugin. Must stay constant for the life of the plugin. -->
+    <id>com.lizongying.page1</id>
+
+    <!-- Text to display as name on Settings | Plugin page -->
+    <name>Page1</name>
+
+    <!-- Product and plugin compatibility requirements -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+
+    <!-- Text to display as company information on Settings | Plugin page -->
+    <vendor url="https://github.com/lizongying">Li ZongYing</vendor>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType
+                language="Page1"
+                implementationClass="com.lizongying.language.P1FileType"
+                name="Page1 File"
+                fieldName="INSTANCE"
+                extensions="p1"/>
+
+        <lang.parserDefinition
+                language="Page1"
+                implementationClass="com.lizongying.language.P1ParserDefinition"/>
+
+        <!--代碼補全 估計因為解析成的yaml token（YAMLElementType），這裡必需得用yaml-->
+        <completion.contributor
+                language="yaml"
+                implementationClass="com.lizongying.language.P1CompletionContributor"/>
+
+        <!--格式化ok-->
+        <lang.formatter
+                language="Page1"
+                implementationClass="com.lizongying.language.P1FormattingModelBuilder"/>
+
+        <!--高亮ok-->
+        <lang.syntaxHighlighterFactory
+                language="Page1"
+                implementationClass="com.lizongying.language.P1SyntaxHighlighterFactory"/>
+
+        <!--注釋ok-->
+        <lang.commenter
+                language="Page1"
+                implementationClass="com.lizongying.language.P1Commenter"/>
+
+        <!--從模板創建文件ok-->
+        <internalFileTemplate name="Page1 Template"/>
+
+        <applicationService serviceImplementation="com.lizongying.language.settings.P1PluginSettings"/>
+        <applicationConfigurable
+                instance="com.lizongying.language.settings.P1PluginConfigurable"
+                displayName="Page1 Settings"/>
+    </extensions>
+
+    <actions>
+        <action id="com.lizongying.language.P1CreateFileFromTemplateAction"
+                class="com.lizongying.language.P1CreateFileFromTemplateAction"
+                text="Page1 Template File"
+                icon="icons/p1.png">
+            <add-to-group group-id="NewGroup"/>
+        </action>
+
+        <action id="com.lizongying.language.P1GenerateHtmlAction"
+                class="com.lizongying.language.P1GenerateHtmlAction"
+                text="Generate HTML"
+                icon="icons/p1.png">
+            <add-to-group group-id="EditorPopupMenu"/>
+            <add-to-group group-id="ProjectViewPopupMenu"/>
+        </action>
+
+        <!--        &lt;!&ndash;內置瀏覽器&ndash;&gt;-->
+        <!--        <action id="com.lizongying.language.actions.OpenHtmlInEmbeddedBrowserAction"-->
+        <!--                class="com.lizongying.language.actions.OpenHtmlInEmbeddedBrowserAction"-->
+        <!--                text="HTML Preview"-->
+        <!--                icon="icons/p1.png">-->
+        <!--            <add-to-group group-id="EditorPopupMenu"/>-->
+        <!--        </action>-->
+
+        <!--        &lt;!&ndash;本地瀏覽器&ndash;&gt;-->
+        <!--        <action id="com.lizongying.language.actions.OpenFileInDefaultBrowserAction"-->
+        <!--                class="com.lizongying.language.actions.OpenFileInDefaultBrowserAction"-->
+        <!--                text="HTML Preview"-->
+        <!--                icon="icons/p1.png">-->
+        <!--            <add-to-group group-id="ProjectViewPopupMenu"/>-->
+        <!--        </action>-->
+
+        <group id="OpenInBrowserGroup1"
+               class="com.lizongying.language.actions.OpenInBrowserBaseGroupAction$OpenInBrowserGroupAction">
+            <add-to-group group-id="RevealGroup" anchor="last"/>
+        </group>
+
+        <!--編輯器的icon ok-->
+        <group id="OpenInBrowserEditorContextBarGroupAction1"
+               class="com.lizongying.language.actions.OpenInBrowserBaseGroupAction$OpenInBrowserEditorContextBarGroupAction">
+            <add-to-group group-id="EditorContextBarMenu" anchor="last"/>
+        </group>
+    </actions>
+</idea-plugin>

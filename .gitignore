@@ -1,0 +1,8 @@
+.DS_Store
+.idea
+build
+dist
+.intellijPlatform
+.kotlin
+script
+.README.md
