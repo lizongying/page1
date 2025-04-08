@@ -31,6 +31,9 @@ object I18nUtils {
         }
     }
 
+    val country: String
+        get() = resourceBundle.locale.country
+
     fun setLocale(locale: Locale) {
         resourceBundle = ResourceBundle.getBundle("messages", locale)
     }

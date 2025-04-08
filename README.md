@@ -125,7 +125,9 @@ html:
 
 #### 什麼時候用composes
 
-如果子元素是多個且tagName不同的時候，就需要使用composes了。1是因為yaml的key不允許重複，2是容易引起困惑“這個屬性或元素是否唯一呢？”
+如果子元素是多個且tagName不同的時候，就需要使用composes了。
+
+建議子元素放在composes下。
 
 ### 更多
 

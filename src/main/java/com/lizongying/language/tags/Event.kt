@@ -1,7 +1,14 @@
 package com.lizongying.language.tags
 
 // https://developer.mozilla.org/zh-CN/docs/Web/HTML/Global_attributes
-enum class Even(val label: String) {
+enum class Event(
+    val label: String,
+    val stage: Stage = Stage.NORMAL,
+    val parents: List<String> = emptyList(),
+    val desc: String = "",
+    val descCN: String = "",
+    val descTW: String = ""
+) {
     ONABORT("onabort"),
     ONAUTOCOMPLETE("onautocomplete"),
     ONAUTOCOMPLETEERROR("onautocompleteerror"),
@@ -63,5 +70,10 @@ enum class Even(val label: String) {
     ONTIMEUPDATE("ontimeupdate"),
     ONTOGGLE("ontoggle"),
     ONVOLUMECHANGE("onvolumechange"),
-    ONWAITING("onwaiting")
+    ONWAITING("onwaiting");
+
+    companion object {
+        val all
+            get() = enumValues<Event>()
+    }
 }
