@@ -3,31 +3,12 @@ package com.lizongying.language.tags
 enum class Element(
     val label: String,
     val stage: Stage = Stage.NORMAL,
-    var parents: List<Element> = emptyList(),
+    var elements: List<Element> = emptyList(),
     val desc: String = "",
     val descCN: String = "",
     val descTW: String = "",
     val selfClosing: Boolean,
 ) {
-    HTML(
-        "html",
-        Stage.NORMAL,
-        emptyList(),
-        "Represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.",
-        "表示一个 HTML 文档的根（顶级元素），所以它也被称为根元素。所有其它元素必须是此元素的后代。",
-        "表示一個 HTML 文檔的根（頂級元素），所以它也被稱爲根元素。所有其它元素必須是此元素的後代。",
-        false,
-    ),
-    HEAD(
-        "head",
-        Stage.NORMAL,
-        listOf(HTML),
-        "Contains machine-readable information (metadata) about the document, like its title, scripts, and style sheets.",
-        "包含文档相关的配置信息（元数据），包括文档的标题、脚本和样式表等。",
-        "包含文檔相關的配置信息（元數據），包括文檔的標題、脚本和樣式表等。",
-        false,
-    ),
-
     TABLE(
         "table",
         Stage.NORMAL,
@@ -40,7 +21,7 @@ enum class Element(
     TBODY(
         "tbody",
         Stage.NORMAL,
-        listOf(TABLE),
+        emptyList(),
         "Encapsulates a set of table rows (<tr> elements), indicating that they comprise the body of a table's (main) data.",
         "封装了一系列表格的行（<tr> 元素），代表了它们是表格（<table>）主要内容的组成部分。",
         "封裝了一係列表格的行（<tr> 元素），代表了它們是表格（<table>）主要内容的組成部分。",
@@ -49,7 +30,7 @@ enum class Element(
     THEAD(
         "thead",
         Stage.NORMAL,
-        listOf(TABLE),
+        emptyList(),
         "Encapsulates a set of table rows (<tr> elements), indicating that they comprise the head of a table with information about the table's columns. This is usually in the form of column headers (<th> elements).",
         "定义了一组定义表格的列头的行。",
         "定義了一組定義表格的列頭的行。",
@@ -58,7 +39,7 @@ enum class Element(
     TFOOT(
         "tfoot",
         Stage.NORMAL,
-        listOf(TABLE),
+        emptyList(),
         "Encapsulates a set of table rows (<tr> elements), indicating that they comprise the foot of a table with information about the table's columns. This is usually a summary of the columns, e.g., a sum of the given numbers in a column.",
         "定义了一组表格中各列的汇总行。",
         "定義了一組表格中各列的匯總行。",
@@ -113,7 +94,7 @@ enum class Element(
     AREA(
         "area",
         Stage.NORMAL,
-        listOf(MAP),
+        emptyList(),
         "Defines an area inside an image map that has predefined clickable areas. An image map allows geometric areas on an image to be associated with hyperlink.",
         "在图片上定义一个可点击区域。图像映射（image map）允许图像上的几何区域与超链接关联。",
         "在圖片上定義一個可點擊區域。圖像映射（image map）允許圖像上的幾何區域與超鏈接關聯。",
@@ -158,7 +139,7 @@ enum class Element(
     BASE(
         "base",
         Stage.NORMAL,
-        listOf(HEAD),
+        emptyList(),
         "Specifies the base URL to use for all relative URLs in a document. There can be only one such element in a document.",
         "指定用于一个文档中包含的所有相对 URL 的根 URL。一份中只能有一个该元素。",
         "指定用于一個文檔中包含的所有相對 URL 的根 URL。一份中隻能有一個該元素。",
@@ -203,7 +184,7 @@ enum class Element(
     BODY(
         "body",
         Stage.NORMAL,
-        listOf(HTML),
+        emptyList(),
         "Represents the content of an HTML document. There can be only one such element in a document.",
         "表示文档的内容。文档中只能有一个该元素。",
         "表示文檔的内容。文檔中隻能有一個該元素。",
@@ -239,7 +220,7 @@ enum class Element(
     CAPTION(
         "caption",
         Stage.NORMAL,
-        listOf(TABLE),
+        emptyList(),
         "Specifies the caption (or title) of a table.",
         "指定表格的标题。",
         "指定表格的標題。",
@@ -276,7 +257,7 @@ enum class Element(
     COLGROUP(
         "colgroup",
         Stage.NORMAL,
-        listOf(THEAD, TBODY, TFOOT, TABLE),
+        emptyList(),
         "Defines a group of columns within a table.",
         "定义表中的一组列表。",
         "定義表中的一組列表。",
@@ -285,7 +266,7 @@ enum class Element(
     COL(
         "col",
         Stage.NORMAL,
-        listOf(COLGROUP),
+        emptyList(),
         "Defines one or more columns in a column group represented by its implicit or explicit parent <colgroup> element. The <col> element is only valid as a child of a <colgroup> element that has no span attribute defined.",
         "定义表格中的列，并用于定义所有公共单元格上的公共语义。它通常位于 <colgroup> 元素内。",
         "定義表格中的列，并用于定義所有公共單元格上的公共語義。它通常位于 <colgroup> 元素内。",
@@ -330,7 +311,7 @@ enum class Element(
     DD(
         "dd",
         Stage.NORMAL,
-        listOf(DL),
+        emptyList(),
         "Provides the description, definition, or value for the preceding term (<dt>) in a description list (<dl>).",
         "用来指明一个描述列表（<dl>）元素中先前术语（<dt>）的描述、定义或值。",
         "用來指明一個描述列表（<dl>）元素中先前術語（<dt>）的描述、定義或值。",
@@ -393,7 +374,7 @@ enum class Element(
     DT(
         "dt",
         Stage.NORMAL,
-        listOf(DL),
+        emptyList(),
         "Specifies a term in a description or definition list, and as such must be used inside a <dl> element. It is usually followed by a <dd> element; however, multiple <dt> elements in a row indicate several terms that are all defined by the immediate next <dd> element.",
         "在描述或定义列表中声明一个术语。该元素仅能作为 <dl> 的子元素出现。通常在该元素后面会跟着一个 <dd> 元素；但多个连续出现的 <dt> 元素也将由出现在它们后面的第一个 <dd> 元素定义。",
         "在描述或定義列表中聲明一個術語。該元素僅能作爲 <dl> 的子元素出現。通常在該元素後面會跟着一個 <dd> 元素；但多個連續出現的 <dt> 元素也將由出現在它們後面的第一個 <dd> 元素定義。",
@@ -447,7 +428,7 @@ enum class Element(
     FIGURE(
         "figure",
         Stage.NORMAL,
-        listOf(FIGCAPTION),
+        emptyList(),
         "Represents self-contained content, potentially with an optional caption, which is specified using the <figcaption> element. The figure, its caption, and its contents are referenced as a single unit.",
         "表示一段独立的内容，可能包含 <figcaption> 元素定义的标题。该插图、标题和其中的内容通常作为一个独立的引用单元。",
         "表示一段獨立的内容，可能包含 <figcaption> 元素定義的標題。該插圖、標題和其中的内容通常作爲一個獨立的引用單元。",
@@ -654,7 +635,7 @@ enum class Element(
     LEGEND(
         "legend",
         Stage.NORMAL,
-        listOf(FIELDSET),
+        emptyList(),
         "Represents a caption for the content of its parent <fieldset>.",
         "用于表示其父元素 <fieldset> 的内容标题。",
         "用于表示其父元素 <fieldset> 的内容標題。",
@@ -690,7 +671,7 @@ enum class Element(
     LI(
         "li",
         Stage.NORMAL,
-        listOf(OL, UL, MENU),
+        emptyList(),
         "Represents an item in a list. It must be contained in a parent element: an ordered list (<ol>), an unordered list (<ul>), or a menu (<menu>). In menus and unordered lists, list items are usually displayed using bullet points. In ordered lists, they are usually displayed with an ascending counter on the left, such as a number or letter.",
         "表示列表里的条目。它必须包含在一个父元素里：有序列表（<ol>）、无序列表（<ul>）或者菜单（<menu>）。在菜单或者无序列表里，列表条目通常用点排列显示；在有序列表里，列表条目常在左边显示按升序排列的计数，例如数字或者字母。",
         "表示列表裏的條目。它必須包含在一個父元素裏：有序列表（<ol>）、無序列表（<ul>）或者菜單（<menu>）。在菜單或者無序列表裏，列表條目通常用點排列顯示；在有序列表裏，列表條目通常在左邊顯示按升序排列的計數，例如數字或者字母。",
@@ -699,7 +680,7 @@ enum class Element(
     LINK(
         "link",
         Stage.NORMAL,
-        listOf(HEAD),
+        emptyList(),
         "Specifies relationships between the current document and an external resource. This element is most commonly used to link to CSS but is also used to establish site icons (both \"favicon\" style icons and icons for the home screen and apps on mobile devices) among other things.",
         "指定当前文档与外部资源的关系。该元素最常用于链接 CSS，此外也可以被用来创建站点图标（比如“favicon”样式图标和移动设备上用以显示在主屏幕的图标）。",
         "指定當前文檔與外部資源的關係。該元素最常用于鏈接 CSS，此外也可以被用來創建站點圖標（比如“favicon”樣式圖標和移動設備上用以顯示在主屏幕的圖標）。",
@@ -753,7 +734,7 @@ enum class Element(
     META(
         "meta",
         Stage.NORMAL,
-        listOf(HEAD),
+        emptyList(),
         "Represents metadata that cannot be represented by other HTML meta-related elements, like <base>, <link>, <script>, <style> and <title>.",
         "表示那些不能由其它 HTML 元相关（meta-related）元素表示的元数据信息。如：<base>、<link>、<script>、<style> 或 <title>。",
         "表示那些不能由其它 HTML 元相關（meta-related）元素表示的元數據信息。如：<base>、<link>、<script>、<style> 或 <title>。",
@@ -843,7 +824,7 @@ enum class Element(
     OPTION(
         "option",
         Stage.NORMAL,
-        listOf(SELECT, OPTGROUP, DATALIST),
+        emptyList(),
         "Used to define an item contained in a select, an <optgroup>, or a <datalist> element. As such, <option> can represent menu items in popups and other lists of items in an HTML document.",
         "用于定义在 select、<optgroup> 或 <datalist> 元素中包含的选项。<option> 可以在弹出窗口和 HTML 文档中的其他项目列表中表示菜单项。",
         "用于定義在 select、<optgroup> 或 <datalist> 元素中包含的選項。<option> 可以在彈出窗口和 HTML 文檔中的其他項目列表中表示菜單項。",
@@ -1051,7 +1032,7 @@ enum class Element(
     SOURCE(
         "source",
         Stage.NORMAL,
-        listOf(PICTURE, AUDIO, VIDEO),
+        emptyList(),
         "Specifies multiple media resources for the picture, the audio element, or the video element. It is a void element, meaning that it has no content and does not have a closing tag. It is commonly used to offer the same media content in multiple file formats in order to provide compatibility with a broad range of browsers given their differing support for image file formats and media file formats.",
         "为 picture、audio 或 video 元素指定多个媒体资源。这是一个空元素，这意味着它没有内容，也没有封闭标签。它通常用于以多种格式提供相同的媒体内容，以提供不同浏览器的兼容性，因为浏览器对图像文件和媒体文件格式的支持不同。",
         "爲 picture、audio 或 video 元素指定多個媒體資源。這是一個空元素，這意味着它没有内容，也没有封閉標簽。它通常用于以多种格式提供相同的媒體内容，以提供不同瀏覽器的兼容性，。",
@@ -1087,7 +1068,7 @@ enum class Element(
     STYLE(
         "style",
         Stage.NORMAL,
-        listOf(HEAD),
+        emptyList(),
         "Contains style information for a document or part of a document. It contains CSS, which is applied to the contents of the document containing this element.",
         "包含文档或者文档部分内容的样式信息，它们会被应用于包含此元素的文档。",
         "包含文檔或者文檔部分内容的樣式信息，它們會被應用于包含此元素的文檔。",
@@ -1105,7 +1086,7 @@ enum class Element(
     SUMMARY(
         "summary",
         Stage.NORMAL,
-        listOf(DETAILS),
+        emptyList(),
         "Specifies a summary, caption, or legend for a details element's disclosure box. Clicking the <summary> element toggles the state of the parent <details> element open and closed.",
         "用作 details 元素内容的摘要、标题或图例。点击 <summary> 元素会翻转父元素 <details> 的展开和关闭状态。",
         "用作 details 元素内容的摘要、標題或圖例。點擊 <summary> 元素會翻轉父元素 <details> 的展開和關閉狀態。",
@@ -1132,7 +1113,7 @@ enum class Element(
     TR(
         "tr",
         Stage.NORMAL,
-        listOf(THEAD, TBODY, TFOOT, TABLE),
+        emptyList(),
         "Defines a row of cells in a table. The row's cells can then be established using a mix of <td> (data cell) and <th> (header cell) elements.",
         "定义表格中的行。同一行可同时出现 <td>（数据单元格）和 <th>（列头单元格）元素。",
         "定義表格中的行。同一行可同時出現 <td>（數據單元格）和 <th>（列頭單元格）元素。",
@@ -1141,7 +1122,7 @@ enum class Element(
     TD(
         "td",
         Stage.NORMAL,
-        listOf(TR),
+        emptyList(),
         "A child of the <tr> element, it defines a cell of a table that contains data.",
         "定义了一个包含数据的表格单元格。它是表格模型（table model）的一部分。",
         "定義了一個包含數據的表格單元格。它是表格模型（table model）的一部分。",
@@ -1169,7 +1150,7 @@ enum class Element(
     TH(
         "th",
         Stage.NORMAL,
-        listOf(TR),
+        emptyList(),
         "A child of the <tr> element, it defines a cell as the header of a group of table cells. The nature of this group can be explicitly defined by the scope and headers attributes.",
         "定义表格内的表头单元格。这部分特征是由 scope 和 headers 属性准确定义的。",
         "定義表格内的表頭單元格。這部分特徵是由 scope 和 headers 屬性準確定義的。",
@@ -1188,7 +1169,7 @@ enum class Element(
     TITLE(
         "title",
         Stage.NORMAL,
-        listOf(HEAD),
+        emptyList(),
         "Defines the document's title that is shown in a browser's title bar or a page's tab. It only contains text; HTML tags within the element, if any, are also treated as plain text.",
         "定义文档的标题，显示在浏览器的标题栏或标签页上。它只应该包含文本，若是包含有标签，则它包含的任何标签都将被忽略。",
         "定義文檔的標題，顯示在瀏覽器的標題欄或標簽頁上。它隻應該包含文本，若是包含有標簽，則它包含的任何標簽都將被忽略。",
@@ -1197,7 +1178,7 @@ enum class Element(
     TRACK(
         "track",
         Stage.NORMAL,
-        listOf(VIDEO, AUDIO),
+        emptyList(),
         "Used as a child of the media elements, audio and video. It lets you specify timed text tracks (or time-based data), for example to automatically handle subtitles. The tracks are formatted in WebVTT format (.vtt files)—Web Video Text Tracks.",
         "被当作媒体元素——音频（audio）和视频（video）的子元素来使用。它允许指定时序文本轨道（或者基于时间的数据），例如自动处理字幕。轨道格式有 WebVTT 格式（.vtt 格式文件）——Web 视频文本轨格式。",
         "被當作媒體元素——音頻（audio）和視頻（video）的子元素來使用。它允許指定時序文本軌道（或者基于時間的數據），例如自動處理字幕。軌道格式有 WebVTT 格式（.vtt 格式文件）——Web 視頻文本軌格式。",
@@ -1247,7 +1228,26 @@ enum class Element(
         "渲染在开始和结束标签之间的文本，而不解释中间的 HTML 内容，并使用等宽字体。HTML2 规范建议它应该渲染得足够宽以允许每行 80 个字符。",
         "渲染在開始和結束標簽之間的文本，而不解釋中間的 HTML 内容，并使用等寬字體。HTML2 規范建議它應該渲染得足够寬以允許每行 80 個字符。",
         false,
-    );
+    ),
+    HEAD(
+        "head",
+        Stage.NORMAL,
+        listOf(BASE, LINK, META, STYLE, TITLE, SCRIPT),
+        "Contains machine-readable information (metadata) about the document, like its title, scripts, and style sheets.",
+        "包含文档相关的配置信息（元数据），包括文档的标题、脚本和样式表等。",
+        "包含文檔相關的配置信息（元數據），包括文檔的標題、脚本和樣式表等。",
+        false,
+    ),
+    HTML(
+        "html",
+        Stage.NORMAL,
+        listOf(HEAD, BODY),
+        "Represents the root (top-level element) of an HTML document, so it is also referred to as the root element. All other elements must be descendants of this element.",
+        "表示一个 HTML 文档的根（顶级元素），所以它也被称为根元素。所有其它元素必须是此元素的后代。",
+        "表示一個 HTML 文檔的根（頂級元素），所以它也被稱爲根元素。所有其它元素必須是此元素的後代。",
+        false,
+    ),
+    ;
 
     /*
     head: html
@@ -1445,8 +1445,6 @@ enum class Element(
         val labels
             get() = all.map { it.label }
 
-        fun getChildren(parent: Element): List<Element> {
-            return all.filter { it.parents.contains(parent) }
-        }
+        val filter = listOf(HTML, HEAD, BASE, LINK, META, STYLE, TITLE, BODY)
     }
 }

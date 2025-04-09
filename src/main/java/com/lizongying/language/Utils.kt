@@ -15,16 +15,16 @@ import com.intellij.psi.xml.XmlTag
 import com.lizongying.language.psi.P1File
 import com.lizongying.language.tags.Element.Companion.selfClosingTags
 import com.lizongying.language.tags.Element.Companion.tags
+import com.lizongying.language.tags.Tags.COMPOSES
+import org.jetbrains.yaml.psi.YAMLKeyValue
 import org.jetbrains.yaml.psi.YAMLMapping
 import org.jetbrains.yaml.psi.YAMLSequence
+import org.jetbrains.yaml.psi.YAMLSequenceItem
 import org.jetbrains.yaml.psi.impl.YAMLDocumentImpl
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 import java.io.File
-import java.io.FileWriter
-import java.io.IOException
 
 object Utils {
-
     fun processYamlFileToHtml(project: Project, psiFile: P1File, virtualFile: VirtualFile) {
         createXmlFile(project, virtualFile)?.let { xmlFile ->
             val document = PsiDocumentManager.getInstance(project).getDocument(xmlFile) ?: return
@@ -97,9 +97,10 @@ object Utils {
     ) {
         when (val topLevelValue = yamlDocument.topLevelValue) {
             is YAMLMapping -> {
+                println("YAMLMapping $topLevelValue")
                 val html = topLevelValue.getKeyValueByKey("html")
                 if (html != null) {
-                    val tag = factory.createTagFromText("<html></html>")
+                    val tag = factory.createTagFromText("<html lang=\"en-US\"></html>")
                     when (val value = html.value) {
                         is YAMLMapping -> {
                             processYAMLMappingToHtml(value, tag, factory)
@@ -114,9 +115,143 @@ object Utils {
                         }
                     }
                     document.setText("<!DOCTYPE html>${tag.text}")
+                    return
                 }
+
+                val body = topLevelValue.getKeyValueByKey("body")
+                if (body != null) {
+                    val tag = factory.createTagFromText("<html lang=\"en-US\"></html>")
+                    val tagBody = factory.createTagFromText("<body></body>")
+                    when (val value = body.value) {
+                        is YAMLMapping -> {
+                            println("body YAMLMapping")
+                            processYAMLMappingToHtml(value, tagBody, factory)
+                        }
+
+                        is YAMLSequence -> {
+                            println("body YAMLSequence")
+                            processYAMLSequenceToHtml(value, tagBody, factory)
+                        }
+
+                        else -> {
+                            println("unknown type")
+                        }
+                    }
+                    tag.add(tagBody)
+                    document.setText("<!DOCTYPE html>${tag.text}")
+                    return
+                }
+
+                val tag = factory.createTagFromText("<html lang=\"en-US\"></html>")
+                val tagBody = factory.createTagFromText("<body></body>")
+                processYAMLMappingToHtml(topLevelValue, tagBody, factory)
+                tag.add(tagBody)
+                document.setText("<!DOCTYPE html>${tag.text}")
+            }
+
+            is YAMLSequence -> {
+                println("YAMLSequence $topLevelValue")
+                val tag = factory.createTagFromText("<html lang=\"en-US\"></html>")
+                val tagBody = factory.createTagFromText("<body></body>")
+                processYAMLSequenceToHtml(topLevelValue, tagBody, factory)
+                tag.add(tagBody)
+                document.setText("<!DOCTYPE html>${tag.text}")
+            }
+
+            else -> {
+                println("22 topLevelValue $topLevelValue")
             }
         }
+    }
+
+    private fun processYAMLKeyValueToHtml(
+        i: YAMLKeyValue,
+        parentTag: XmlTag,
+        factory: XmlElementFactory
+    ) {
+            if (i.keyText == "class") {
+                when (val value = i.value) {
+                    is YAMLSequence -> {
+                        parentTag.setAttribute(
+                            i.keyText,
+                            value.items.filter { it.value != null }.map { it.value?.text }.joinToString(" ")
+                        )
+                    }
+
+                    else -> {
+                        parentTag.setAttribute(i.keyText, i.valueText)
+                    }
+                }
+                return
+            }
+
+            if (i.keyText == "style") {
+                when (val value = i.value) {
+                    is YAMLMapping -> {
+                        parentTag.setAttribute(
+                            i.keyText,
+                            value.keyValues.joinToString("; ") { "${it.keyText}: ${it.valueText}" }
+                        )
+                    }
+
+                    else -> {
+                        parentTag.setAttribute(i.keyText, i.valueText)
+                    }
+                }
+                return
+            }
+
+            if (i.keyText == "id") {
+                parentTag.setAttribute(i.keyText, i.valueText)
+                return
+            }
+
+            if (i.keyText == COMPOSES) {
+                when (val value = i.value) {
+                    is YAMLSequence -> {
+                        processYAMLSequenceToHtml(value, parentTag, factory)
+                    }
+
+                    is YAMLPlainTextImpl -> {
+                        parentTag.add(factory.createDisplayText(value.textValue))
+                    }
+
+                    else -> {
+                        println("${i.keyText} is unknown $value")
+                    }
+                }
+                return
+            }
+
+            if (i.keyText !in tags) {
+                parentTag.setAttribute(i.keyText, i.valueText)
+                return
+            }
+
+            val text = if (i.keyText in selfClosingTags) "<${i.keyText} />" else "<${i.keyText}></${i.keyText}>"
+            val tag = factory.createTagFromText(text)
+            when (val value = i.value) {
+                is YAMLMapping -> {
+                    processYAMLMappingToHtml(value, tag, factory)
+                }
+
+                is YAMLSequence -> {
+                    processYAMLSequenceToHtml(value, tag, factory)
+                }
+
+                is YAMLPlainTextImpl -> {
+                    tag.add(factory.createDisplayText(value.textValue))
+                }
+
+                null -> {}
+
+                else -> {
+                    println("${i.keyText} unknown $value")
+                }
+            }
+
+            parentTag.add(tag)
+            println("${tag.name} add to ${parentTag.name}")
     }
 
     private fun processYAMLMappingToHtml(
@@ -211,6 +346,17 @@ object Utils {
         }
     }
 
+    private fun processYAMLSequenceItemToHtml(
+        i: YAMLSequenceItem,
+        parentTag: XmlTag,
+        factory: XmlElementFactory
+    ) {
+        val value = i.value
+        if (value is YAMLMapping) {
+            processYAMLMappingToHtml(value, parentTag, factory)
+        }
+    }
+
     private fun processYAMLSequenceToHtml(
         yamlSequence: YAMLSequence,
         parentTag: XmlTag,
@@ -221,18 +367,6 @@ object Utils {
             if (value is YAMLMapping) {
                 processYAMLMappingToHtml(value, parentTag, factory)
             }
-        }
-    }
-
-    // 生成并保存 HTML 文件
-    fun generateHtmlFile(htmlContent: String, outputFilePath: String) {
-        try {
-            val fileWriter = FileWriter(outputFilePath)
-            fileWriter.write(htmlContent)
-            fileWriter.close()
-            println("HTML file generated successfully: $outputFilePath")
-        } catch (e: IOException) {
-            println("Error writing HTML file: ${e.message}")
         }
     }
 

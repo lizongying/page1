@@ -135,6 +135,40 @@ html:
 
 ### 更多
 
+### 允許省略`html`,`body`
+
+如：
+
+```yaml
+body:
+  style:
+    width: 100%
+    height: 100%
+  composes: hello, world!
+```
+
+或
+
+```yaml
+style:
+  width: 100%
+  height: 100%
+composes: hello, world!
+```
+
+或
+
+```yaml
+p: hello, world!
+```
+
+或
+
+```yaml
+- p: hello,
+- p: world!
+```
+
 Page1是有更多目標的，還有很多功能在開發中，敬請期待。
 
 ## TODO

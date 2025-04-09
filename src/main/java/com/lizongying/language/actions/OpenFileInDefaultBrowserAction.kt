@@ -1,7 +1,6 @@
 package com.lizongying.language.actions
 
 import com.intellij.ide.GeneralLocalSettings
-import com.intellij.ide.GeneralSettings
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.browsers.BrowserLauncherAppless
 import com.intellij.ide.browsers.DefaultBrowserPolicy

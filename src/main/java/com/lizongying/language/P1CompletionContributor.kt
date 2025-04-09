@@ -5,36 +5,14 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiElement
-import com.lizongying.language.Tags.COMPOSES
 import com.lizongying.language.tags.*
 import com.lizongying.language.tags.Element.Companion.selfClosingTags
+import com.lizongying.language.tags.Tags.COMPOSES
 import org.jetbrains.yaml.psi.*
 import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 
 
-data class Tag(
-    val label: String,
-    val stage: Stage = Stage.NORMAL,
-    val type: Type,
-    val desc: String = "",
-    val descCN: String = "",
-    val descTW: String = "",
-)
-
-object Tags {
-    val id = Tag("id", Stage.NORMAL, Type.ATTRIBUTE)
-    val clas = Tag("class", Stage.NORMAL, Type.ATTRIBUTE)
-    val style = Tag("style", Stage.NORMAL, Type.ATTRIBUTE)
-
-    val href = Tag("href", Stage.NORMAL, Type.ATTRIBUTE)
-    val target = Tag("target", Stage.NORMAL, Type.ATTRIBUTE)
-
-    const val COMPOSES = "composes"
-}
-
 internal class P1CompletionContributor : CompletionContributor() {
-    private val reElement = Regex("^-\\s([^:]+):.*")
-
     private val htmlTagPropertyMap = mutableMapOf(
         "div" to mutableSetOf(Tags.clas, Tags.id, Tags.style),
         "p" to mutableSetOf(Tags.clas, Tags.id, Tags.style),
@@ -53,17 +31,34 @@ internal class P1CompletionContributor : CompletionContributor() {
                 htmlTagPropertyMap[element.label] = mutableSetOf()
             }
 
-            for (it in Element.getChildren(element)) {
-                htmlTagPropertyMap[element.label]?.add(
-                    Tag(
-                        it.label,
-                        it.stage,
-                        Type.ELEMENT,
-                        it.desc,
-                        it.descCN,
-                        it.descTW
+            if (element.elements.isNotEmpty()) {
+                for (it in element.elements) {
+                    htmlTagPropertyMap[element.label]?.add(
+                        Tag(
+                            it.label,
+                            it.stage,
+                            Type.ELEMENT,
+                            it.desc,
+                            it.descCN,
+                            it.descTW
+                        )
                     )
-                )
+                }
+            } else {
+                for (it in Element.all.filter { it !in Element.filter }) {
+                    if (!element.selfClosing) {
+                        htmlTagPropertyMap[element.label]?.add(
+                            Tag(
+                                it.label,
+                                it.stage,
+                                Type.ELEMENT,
+                                it.desc,
+                                it.descCN,
+                                it.descTW
+                            )
+                        )
+                    }
+                }
             }
 
             // add composes
@@ -192,12 +187,8 @@ internal class P1CompletionContributor : CompletionContributor() {
         val file = position.containingFile
         if (file.fileType == P1FileType) {
             when (val element = position.parent) {
-                is YAMLScalarText -> {
-                    println("is YAMLScalarText 1:${element.textValue} 2:${element.text}")
-                }
-
                 is YAMLScalar -> {
-                    println("is YAMLScalar, parent: ${element.parent} element: $element")
+                    println("is YAMLScalar, element: $element, parent: ${element.parent}")
 
                     var prefix = "- "
                     if (element is YAMLPlainTextImpl) {
@@ -220,7 +211,6 @@ internal class P1CompletionContributor : CompletionContributor() {
                             val filter = mutableListOf<String>()
                             if (parent.keyText == COMPOSES && p1 is YAMLMapping) {
                                 allowTypes = mutableListOf(Type.ELEMENT)
-                                filter.add(COMPOSES)
                                 val p2 = p1.parent
                                 if (p2 is YAMLKeyValue) {
                                     key = p2.keyText
@@ -256,15 +246,6 @@ internal class P1CompletionContributor : CompletionContributor() {
                                     val p3 = p2.parent
                                     if (p3 is YAMLKeyValue) {
                                         key = p3.keyText
-                                        filter.add(COMPOSES)
-                                        parent.items.forEach { item ->
-                                            val v = item.value
-                                            if (v is YAMLMapping) {
-                                                v.keyValues.forEach {
-                                                    filter.add(it.keyText)
-                                                }
-                                            }
-                                        }
                                     }
                                 }
 
@@ -284,16 +265,6 @@ internal class P1CompletionContributor : CompletionContributor() {
                                     val p3 = p2.parent
                                     if (p3 is YAMLKeyValue) {
                                         key = p3.keyText
-                                        filter.add(COMPOSES)
-
-                                        val v = p1.value
-                                        if (v is YAMLCompoundValue) {
-                                            v.text.split("\n").map { it.trim() }.forEach { item ->
-                                                reElement.find(item)?.groupValues?.get(1)?.let {
-                                                    filter.add(it)
-                                                }
-                                            }
-                                        }
                                     }
                                 }
 
@@ -316,15 +287,15 @@ internal class P1CompletionContributor : CompletionContributor() {
                                         val p4 = p3.parent
                                         if (p4 is YAMLKeyValue) {
                                             key = p4.keyText
-                                            filter.add(COMPOSES)
-                                            p1.items.forEach { item ->
-                                                val v = item.value
-                                                if (v is YAMLMapping) {
-                                                    v.keyValues.forEach {
-                                                        filter.add(it.keyText)
-                                                    }
-                                                }
-                                            }
+//                                            filter.add(COMPOSES)
+//                                            p1.items.forEach { item ->
+//                                                val v = item.value
+//                                                if (v is YAMLMapping) {
+//                                                    v.keyValues.forEach {
+//                                                        filter.add(it.keyText)
+//                                                    }
+//                                                }
+//                                            }
                                         }
                                     }
 
@@ -341,7 +312,7 @@ internal class P1CompletionContributor : CompletionContributor() {
                 }
 
                 else -> {
-                    println("element: $element element.text:${element.text}")
+                    println("element: $element, element.text:${element.text}")
                 }
             }
         }

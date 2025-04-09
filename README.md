@@ -1,6 +1,7 @@
 # Page1
 
-Page1 is an HTML generation tool that uses YAML-like files to describe HTML structure, allowing easy conversion to HTML files.
+Page1 is an HTML generation tool that uses YAML-like files to describe HTML structure, allowing easy conversion to HTML
+files.
 
 [中文](./README_CN.md)
 
@@ -133,6 +134,40 @@ html:
 
 Use `composes` when child elements have different tag names. We recommend placing all child elements under `composes`
 for clarity.
+
+#### Allows omitting `html` and `body`.
+
+or:
+
+```yaml
+body:
+  style:
+    width: 100%
+    height: 100%
+  composes: hello, world!
+```
+
+or:
+
+```yaml
+style:
+  width: 100%
+  height: 100%
+composes: hello, world!
+```
+
+or:
+
+```yaml
+p: hello, world!
+```
+
+or:
+
+```yaml
+- p: hello,
+- p: world!
+```
 
 ## TODO
 
