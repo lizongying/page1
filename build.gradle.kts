@@ -20,8 +20,6 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.0")
-//    implementation("it.unimi.dsi:fastutil:8.5.15")
     testImplementation("junit:junit:4.13.2")
 
     intellijPlatform {
@@ -35,8 +33,9 @@ intellijPlatform {
     pluginConfiguration {
         id = "page1"
         name = "Page1"
-        version = "0.0.5"
-        description = "Page1 is an HTML generation tool that uses YAML-like files to describe HTML structure, allowing easy conversion to HTML files."
+        version = "0.0.6"
+        description =
+            "Page1 is an HTML generation tool that uses YAML-like files to describe HTML structure, allowing easy conversion to HTML files."
         changeNotes =
             """
 Allows omitting `html` and `body`.

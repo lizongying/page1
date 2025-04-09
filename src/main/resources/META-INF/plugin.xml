@@ -11,6 +11,7 @@
 
     <!-- Product and plugin compatibility requirements -->
     <depends>org.jetbrains.plugins.yaml</depends>
+    <depends>com.intellij.modules.platform</depends>
 
     <!-- Text to display as company information on Settings | Plugin page -->
     <vendor url="https://github.com/lizongying">Li ZongYing</vendor>
