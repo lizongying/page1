@@ -1,4 +1,4 @@
-package com.lizongying.language
+package com.lizongying.language.actions
 
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -15,7 +15,7 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.lizongying.language.Utils.processYamlFileToHtml
 import com.lizongying.language.psi.P1File
 
-class P1GenerateHtmlAction : AnAction() {
+class GenerateHtmlAction : AnAction() {
 
     override fun update(e: AnActionEvent) {
         val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE)

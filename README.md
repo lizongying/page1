@@ -1,32 +1,36 @@
 # Page1
 
-Page1是一個HTML生成工具，使用類似YAML的文件來描述HTML，可以方便地將其轉换爲HTML文件。
+Page1 is an HTML generation tool that uses YAML-like files to describe HTML structure, allowing easy conversion to HTML files.
 
-為什麼做這個？
+[中文](./README_CN.md)
 
-* 更簡潔的文件。個人感覺YAML相對XML更加清晰易讀。
-* 可以加入一些默認寫法。可能會捨棄一些陳舊的用法，全面支持HTML5、默認語言、支持移動設備等。
-* 標籤本地化。比如用漢字來描述。
-* 針對CSS、JS的操作優化。
+## Why Page1?
 
-## 開始
+* **Concise Syntax**: YAML is more readable and straightforward compared to XML.
+* **Custom Defaults**: Supports default syntax rules for common elements.
+* **Localized Tags**: Allows using native languages (e.g., Chinese characters) for tag descriptions.
+* **CSS/JS Optimizations**: Streamlined operations for CSS and JavaScript integration.
 
-* 創建文件：創建一個以`.p1`為後綴的文件
-* 生成HTML：右鍵文件或編輯區“Generate HTML”
-* 預覽Page1文件：Open in -> Open in Browser -> 選擇瀏覽器
+![](./screenshots/img2.png)
+![](./screenshots/img1.png)
+![](./screenshots/img3.png)
 
-### 基礎
+## Getting Started
 
-#### 簡單的示例
+* **Create a File**: Create a file with the `.p1` extension.
+* **Generate HTML**: Right-click the file or use the editor option *"Generate HTML from Page1"*.
+* **Preview**: Open the file in a browser via *Open in -> Open in Browser*.
 
-我們來一個簡單的示例：
+### Basics
+
+#### Simple Example
 
 ```yaml
 html:
   body: hello, world!
 ```
 
-將會生成HTML：
+Generates:
 
 ```html
 <!DOCTYPE html>
@@ -35,9 +39,9 @@ html:
 </html>
 ```
 
-#### 屬性
+#### Attributes
 
-我們發現html沒有語言屬性，在Page1裡可以這麼寫：
+Add the `lang` attribute to the html tag:
 
 ```yaml
 html:
@@ -45,7 +49,7 @@ html:
   body: hello, world!
 ```
 
-將會生成HTML：
+Generates:
 
 ```html
 <!DOCTYPE html>
@@ -54,9 +58,9 @@ html:
 </html>
 ```
 
-#### 子元素
+#### Child Elements
 
-子元素的添加也很簡單。現在，你已經學會了Page1。後面的學習中，將不再演示生成的HTML。
+Add nested elements using YAML indentation:
 
 ```yaml
 html:
@@ -65,7 +69,7 @@ html:
     p: hello, world!
 ```
 
-將會生成HTML：
+Generates:
 
 ```html
 <!DOCTYPE html>
@@ -74,11 +78,11 @@ html:
 </html>
 ```
 
-### 進階
+### Advanced
 
-#### 多個子元素
+#### Multiple Child Elements
 
-為了支持多個子元素，我們引入了“composes”屬性，不用擔心，截止目前，僅加入了這一個HTML標準以外的屬性。
+Use the `composes` property to define multiple child elements:
 
 ```yaml
 html:
@@ -89,9 +93,11 @@ html:
       - p: world!
 ```
 
-注意，`p`前面的`-`，這是YAML的列表寫法
+Note: The - symbol denotes a list in YAML.
 
 #### id/class/style
+
+Define element attributes like `id`, `class`, or `style`:
 
 ```yaml
 html:
@@ -107,7 +113,7 @@ html:
       - p: world!
 ```
 
-class和composes也可以這麼寫：
+Alternative syntax for `class` and `composes`:
 
 ```yaml
 html:
@@ -123,26 +129,22 @@ html:
     composes: hello, world!
 ```
 
-#### 什麼時候用composes
+#### When to Use `composes`
 
-如果子元素是多個且tagName不同的時候，就需要使用composes了。
-
-建議子元素放在composes下。
-
-### 更多
-
-Page1是有更多目標的，還有很多功能在開發中，敬請期待。
+Use `composes` when child elements have different tag names. We recommend placing all child elements under `composes`
+for clarity.
 
 ## TODO
 
-* html複製粘貼自動轉化爲yaml
-* include模塊
-* if/else
-* switch/when
-* for/while/loop
-* 可執行腳本
-* 高亮、代碼補全優化
+Page1 is under active development. Upcoming features include:
 
-## 讚賞
+* Auto-convert copied HTML to YAML
+* `include` directives
+* Conditional logic (`if`/`else`, `switch`/`when`)
+* Loops (`for`, `while`)
+* Executable scripts
+* Enhanced syntax highlighting and code completion
+
+## Support
 
 ![image](./screenshots/appreciate.png)

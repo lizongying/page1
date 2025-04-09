@@ -12,6 +12,15 @@ enum class Stage(val label: String) {
             }
         }
     },
+    DEPRECATED("Deprecated") {
+        override fun toString(): String {
+            return when (I18nUtils.country) {
+                "CN" -> "废弃的"
+                "TW" -> "廢棄的"
+                else -> "Deprecated"
+            }
+        }
+    },
     NON_STANDARD("Non-standard") {
         override fun toString(): String {
             return when (I18nUtils.country) {

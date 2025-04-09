@@ -10,7 +10,6 @@
     <name>Page1</name>
 
     <!-- Product and plugin compatibility requirements -->
-    <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.plugins.yaml</depends>
 
     <!-- Text to display as company information on Settings | Plugin page -->
@@ -58,44 +57,27 @@
     </extensions>
 
     <actions>
-        <action id="com.lizongying.language.P1CreateFileFromTemplateAction"
-                class="com.lizongying.language.P1CreateFileFromTemplateAction"
+        <action id="com.lizongying.language.actions.CreateFileFromTemplateAction"
+                class="com.lizongying.language.actions.CreateFileFromTemplateAction"
                 text="Page1 Template File"
                 icon="icons/p1.png">
             <add-to-group group-id="NewGroup"/>
         </action>
 
-        <action id="com.lizongying.language.P1GenerateHtmlAction"
-                class="com.lizongying.language.P1GenerateHtmlAction"
-                text="Generate HTML"
+        <action id="com.lizongying.language.actions.GenerateHtmlAction"
+                class="com.lizongying.language.actions.GenerateHtmlAction"
+                text="Generate HTML from Page1"
                 icon="icons/p1.png">
             <add-to-group group-id="EditorPopupMenu"/>
             <add-to-group group-id="ProjectViewPopupMenu"/>
         </action>
 
-        <!--        &lt;!&ndash;內置瀏覽器&ndash;&gt;-->
-        <!--        <action id="com.lizongying.language.actions.OpenHtmlInEmbeddedBrowserAction"-->
-        <!--                class="com.lizongying.language.actions.OpenHtmlInEmbeddedBrowserAction"-->
-        <!--                text="HTML Preview"-->
-        <!--                icon="icons/p1.png">-->
-        <!--            <add-to-group group-id="EditorPopupMenu"/>-->
-        <!--        </action>-->
-
-        <!--        &lt;!&ndash;本地瀏覽器&ndash;&gt;-->
-        <!--        <action id="com.lizongying.language.actions.OpenFileInDefaultBrowserAction"-->
-        <!--                class="com.lizongying.language.actions.OpenFileInDefaultBrowserAction"-->
-        <!--                text="HTML Preview"-->
-        <!--                icon="icons/p1.png">-->
-        <!--            <add-to-group group-id="ProjectViewPopupMenu"/>-->
-        <!--        </action>-->
-
-        <group id="OpenInBrowserGroup1"
+        <group id="com.lizongying.language.actions.OpenInBrowserGroupAction"
                class="com.lizongying.language.actions.OpenInBrowserBaseGroupAction$OpenInBrowserGroupAction">
             <add-to-group group-id="RevealGroup" anchor="last"/>
         </group>
 
-        <!--編輯器的icon ok-->
-        <group id="OpenInBrowserEditorContextBarGroupAction1"
+        <group id="com.lizongying.language.actions.OpenInBrowserEditorContextBarGroupAction"
                class="com.lizongying.language.actions.OpenInBrowserBaseGroupAction$OpenInBrowserEditorContextBarGroupAction">
             <add-to-group group-id="EditorContextBarMenu" anchor="last"/>
         </group>

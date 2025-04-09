@@ -1,5 +1,6 @@
 package com.lizongying.language.actions
 
+import com.intellij.ide.GeneralLocalSettings
 import com.intellij.ide.GeneralSettings
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.browsers.BrowserLauncherAppless
@@ -48,8 +49,8 @@ fun findUsingBrowser(): WebBrowser? {
     if (defaultBrowserPolicy == DefaultBrowserPolicy.FIRST || defaultBrowserPolicy == DefaultBrowserPolicy.SYSTEM && !BrowserLauncherAppless.canUseSystemDefaultBrowserPolicy()) {
         return browserManager.firstActiveBrowser
     } else if (defaultBrowserPolicy == DefaultBrowserPolicy.ALTERNATIVE) {
-        val path = GeneralSettings.getInstance().browserPath
-        if (!path.isNullOrBlank()) {
+        val path = GeneralLocalSettings.getInstance().browserPath
+        if (path.isNotBlank()) {
             val browser = browserManager.findBrowserById(path)
             if (browser == null) {
                 for (item in browserManager.activeBrowsers) {

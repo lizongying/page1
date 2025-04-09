@@ -3,7 +3,7 @@ package com.lizongying.language.tags
 enum class GlobalAttribute(
     val label: String,
     val stage: Stage = Stage.NORMAL,
-    val parents: List<String> = emptyList(),
+    val parents: List<Element> = emptyList(),
     val desc: String = "",
     val descCN: String = "",
     val descTW: String = ""

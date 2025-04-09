@@ -4,10 +4,8 @@ package com.lizongying.language.actions
 import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.browsers.*
-import com.intellij.ide.browsers.impl.WebBrowserServiceImpl
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.keymap.KeymapUtil
@@ -146,16 +144,8 @@ private fun createRequest(context: DataContext, isForceFileUrlIfNoUrlProvider: B
         if (project != null && psiFile != null && psiFile is P1File && virtualFile != null) {
             val vFile = getOrCreateVirtualFile(virtualFile)
             if (vFile != null) {
-                if (!ApplicationManager.getApplication().isWriteThread) {
-                    ApplicationManager.getApplication().invokeLater({
-                        ApplicationManager.getApplication().runWriteAction {
-                            processYamlFileToHtml(project, psiFile, vFile)
-                        }
-                    }, ModalityState.defaultModalityState())
-                } else {
-                    ApplicationManager.getApplication().runWriteAction {
-                        processYamlFileToHtml(project, psiFile, vFile)
-                    }
+                ApplicationManager.getApplication().runWriteAction {
+                    processYamlFileToHtml(project, psiFile, vFile)
                 }
                 PsiManager.getInstance(project).findFile(vFile)?.let {
                     return createOpenInBrowserRequest(it, isForceFileUrlIfNoUrlProvider)
@@ -181,16 +171,8 @@ private fun createRequest(context: DataContext, isForceFileUrlIfNoUrlProvider: B
                     try {
                         val vFile = getOrCreateVirtualFile(virtualFile)
                         if (vFile != null) {
-                            if (!ApplicationManager.getApplication().isWriteThread) {
-                                ApplicationManager.getApplication().invokeLater({
-                                    ApplicationManager.getApplication().runWriteAction {
-                                        processYamlFileToHtml(project, psiFile, vFile)
-                                    }
-                                }, ModalityState.defaultModalityState())
-                            } else {
-                                ApplicationManager.getApplication().runWriteAction {
-                                    processYamlFileToHtml(project, psiFile, vFile)
-                                }
+                            ApplicationManager.getApplication().runWriteAction {
+                                processYamlFileToHtml(project, psiFile, vFile)
                             }
                             PsiManager.getInstance(project).findFile(vFile)?.let {
                                 return object :

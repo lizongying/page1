@@ -5,7 +5,6 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.psi.PsiElement
-import com.intellij.ui.JBColor
 import com.lizongying.language.Tags.COMPOSES
 import com.lizongying.language.tags.*
 import com.lizongying.language.tags.Element.Companion.selfClosingTags
@@ -23,12 +22,6 @@ data class Tag(
 )
 
 object Tags {
-    val body = Tag("body", Stage.NORMAL, Type.ELEMENT)
-    val head = Tag("head", Stage.NORMAL, Type.ELEMENT)
-
-    val title = Tag("title", Stage.NORMAL, Type.ATTRIBUTE)
-    val meta = Tag("meta", Stage.NORMAL, Type.ELEMENT)
-
     val id = Tag("id", Stage.NORMAL, Type.ATTRIBUTE)
     val clas = Tag("class", Stage.NORMAL, Type.ATTRIBUTE)
     val style = Tag("style", Stage.NORMAL, Type.ATTRIBUTE)
@@ -40,16 +33,18 @@ object Tags {
 }
 
 internal class P1CompletionContributor : CompletionContributor() {
+    private val reElement = Regex("^-\\s([^:]+):.*")
+
     private val htmlTagPropertyMap = mutableMapOf(
         "div" to mutableSetOf(Tags.clas, Tags.id, Tags.style),
         "p" to mutableSetOf(Tags.clas, Tags.id, Tags.style),
         "a" to mutableSetOf(Tags.clas, Tags.id, Tags.style, Tags.href, Tags.target),
 
-        "body" to mutableSetOf(Tags.clas, Tags.id, Tags.style),
         COMPOSES to mutableSetOf(),
 
-        "head" to mutableSetOf(Tags.title, Tags.meta, Tags.style),
-        "html" to mutableSetOf(Tags.head, Tags.body, Tags.style)
+        "html" to mutableSetOf(Tags.style),
+        "head" to mutableSetOf(Tags.style),
+        "body" to mutableSetOf(Tags.style),
     )
 
     init {
@@ -58,16 +53,56 @@ internal class P1CompletionContributor : CompletionContributor() {
                 htmlTagPropertyMap[element.label] = mutableSetOf()
             }
 
-            // composes
-            if (element.label !in selfClosingTags) {
-                htmlTagPropertyMap[element.label]?.add(Tag(COMPOSES, Stage.NORMAL, Type.ATTRIBUTE))
+            for (it in Element.getChildren(element)) {
+                htmlTagPropertyMap[element.label]?.add(
+                    Tag(
+                        it.label,
+                        it.stage,
+                        Type.ELEMENT,
+                        it.desc,
+                        it.descCN,
+                        it.descTW
+                    )
+                )
             }
 
-            htmlTagPropertyMap[COMPOSES]?.add(Tag(element.label, Stage.NORMAL, Type.ELEMENT))
+            // add composes
+            if (element.label !in selfClosingTags) {
+                htmlTagPropertyMap[element.label]?.add(
+                    Tag(
+                        COMPOSES,
+                        Stage.NORMAL,
+                        Type.ATTRIBUTE,
+                        "Can contain multiple repeatable child elements.",
+                        "可以包含多个可重复的子元素。",
+                        "可以包含多個可重複的子元素。"
+                    )
+                )
+            }
+
+            htmlTagPropertyMap[COMPOSES]?.add(
+                Tag(
+                    element.label,
+                    element.stage,
+                    Type.ELEMENT,
+                    element.desc,
+                    element.descCN,
+                    element.descTW
+                )
+            )
 
             // add event
             Event.all.forEach {
-                htmlTagPropertyMap[element.label]?.add(Tag(it.label, Stage.NORMAL, Type.ATTRIBUTE))
+                htmlTagPropertyMap[element.label]?.add(
+                    Tag(
+                        it.label,
+                        it.stage,
+                        Type.ATTRIBUTE,
+                        it.desc,
+                        it.descCN,
+                        it.descTW
+                    )
+                )
             }
 
             // add GlobalAttribute
@@ -86,9 +121,23 @@ internal class P1CompletionContributor : CompletionContributor() {
         }
     }
 
-    private fun handleKey(keyText: String, t: Int, result: CompletionResultSet) {
+    private fun handleKey(
+        keyText: String,
+        prefix: String,
+        allowTypes: List<Type>,
+        filter: List<String>,
+        result: CompletionResultSet
+    ) {
         if (htmlTagPropertyMap.containsKey(keyText.lowercase())) {
             htmlTagPropertyMap[keyText]?.forEach {
+                if (!allowTypes.contains(it.type)) {
+                    return@forEach
+                }
+
+                if (filter.contains(it.label)) {
+                    return@forEach
+                }
+
                 var tailText = it.type.toString()
 
                 if (it.stage != Stage.NORMAL) {
@@ -105,46 +154,32 @@ internal class P1CompletionContributor : CompletionContributor() {
                     desc = it.desc
                 }
 
-                val color = if (it.type == Type.ELEMENT) JBColor.GREEN else JBColor.CYAN
                 val lookupElement = LookupElementBuilder.create(it.label)
                     .withTypeText(desc)
-//                    .withItemTextForeground(color)
                     .withTailText(" (${tailText})", true)
                     .withInsertHandler { context, _ ->
-                        if (it.type == Type.ELEMENT) {
-                            when (t) {
-                                0 -> {
-                                    context.editor.document.insertString(context.startOffset, "- ")
-                                }
-
-                                1 -> {
-                                    context.editor.document.insertString(context.startOffset, " ")
-                                }
-
-                                2 -> {
-
-                                }
-                            }
-
-                            context.editor.document.insertString(context.tailOffset, ": ")
-                            context.editor.caretModel.moveToOffset(context.tailOffset)
-                        }
-
-//                        如果是屬性
-                        if (it.type == Type.ATTRIBUTE) {
-                            if (it.label != "data-") {
+                        when (it.type) {
+                            Type.ELEMENT -> {
+                                context.editor.document.insertString(context.startOffset, prefix)
                                 context.editor.document.insertString(context.tailOffset, ": ")
+                                context.editor.caretModel.moveToOffset(context.tailOffset)
                             }
-                            context.editor.caretModel.moveToOffset(context.tailOffset)
+
+                            // 如果是屬性
+                            Type.ATTRIBUTE -> {
+                                if (it.label != "data-") {
+                                    context.editor.document.insertString(context.tailOffset, ": ")
+                                }
+                                context.editor.caretModel.moveToOffset(context.tailOffset)
+                            }
                         }
                     }
-                if (t == 1) {
+                if (prefix == " ") {
                     result.addElement(LookupElementBuilder.create(""))
                 }
                 result.addElement(lookupElement)
             }
         } else {
-            // 补全 HTML 标签
             htmlTagPropertyMap.keys.forEach { tag ->
                 result.addElement(LookupElementBuilder.create(tag))
             }
@@ -162,32 +197,79 @@ internal class P1CompletionContributor : CompletionContributor() {
                 }
 
                 is YAMLScalar -> {
-                    println("is YAMLScalar, parent: ${element.parent}, parent.text: ${element.parent.text} element: $element element.text: ${element.text}")
+                    println("is YAMLScalar, parent: ${element.parent} element: $element")
 
-                    var t = 0
+                    var prefix = "- "
                     if (element is YAMLPlainTextImpl) {
                         // -
                         if (element.text.startsWith("-IntellijIdeaRulezzz")) {
-                            t = 1
+                            prefix = " "
                         }
                     }
 
                     when (val parent = element.parent) {
                         is YAMLKeyValue -> {
-                            handleKey(parent.keyText, t, result)
+                            if (Element.tags.contains(parent.keyText)) {
+                                if (prefix == "- ") {
+                                    prefix = ""
+                                }
+                            }
+                            var key = parent.keyText
+                            val p1 = parent.parent
+                            var allowTypes = mutableListOf(Type.ELEMENT, Type.ATTRIBUTE)
+                            val filter = mutableListOf<String>()
+                            if (parent.keyText == COMPOSES && p1 is YAMLMapping) {
+                                allowTypes = mutableListOf(Type.ELEMENT)
+                                filter.add(COMPOSES)
+                                val p2 = p1.parent
+                                if (p2 is YAMLKeyValue) {
+                                    key = p2.keyText
+                                }
+                            }
+                            println("YAMLKeyValue $p1 $key")
+                            handleKey(key, prefix, allowTypes, filter, result)
                         }
 
                         is YAMLMapping -> {
                             val p1 = parent.parent
                             if (p1 is YAMLKeyValue) {
-                                handleKey(p1.keyText, t, result)
+                                if (Element.tags.contains(p1.keyText)) {
+                                    prefix = ""
+                                }
+                                handleKey(
+                                    p1.keyText,
+                                    prefix,
+                                    listOf(Type.ELEMENT, Type.ATTRIBUTE),
+                                    parent.keyValues.map { it.keyText },
+                                    result
+                                )
                             }
                         }
 
                         is YAMLSequence -> {
                             val p1 = parent.parent
                             if (p1 is YAMLKeyValue) {
-                                handleKey(p1.keyText, t, result)
+                                val filter = mutableListOf<String>()
+                                var key = p1.keyText
+                                val p2 = p1.parent
+                                if (key == COMPOSES && p2 is YAMLMapping) {
+                                    val p3 = p2.parent
+                                    if (p3 is YAMLKeyValue) {
+                                        key = p3.keyText
+                                        filter.add(COMPOSES)
+                                        parent.items.forEach { item ->
+                                            val v = item.value
+                                            if (v is YAMLMapping) {
+                                                v.keyValues.forEach {
+                                                    filter.add(it.keyText)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                println("YAMLSequence $p2 $filter")
+                                handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
                             }
                         }
 
@@ -195,18 +277,59 @@ internal class P1CompletionContributor : CompletionContributor() {
                         is YAMLCompoundValue -> {
                             val p1 = parent.parent
                             if (p1 is YAMLKeyValue) {
-                                handleKey(p1.keyText, t, result)
+                                val filter = mutableListOf<String>()
+                                var key = p1.keyText
+                                val p2 = p1.parent
+                                if (key == COMPOSES && p2 is YAMLMapping) {
+                                    val p3 = p2.parent
+                                    if (p3 is YAMLKeyValue) {
+                                        key = p3.keyText
+                                        filter.add(COMPOSES)
+
+                                        val v = p1.value
+                                        if (v is YAMLCompoundValue) {
+                                            v.text.split("\n").map { it.trim() }.forEach { item ->
+                                                reElement.find(item)?.groupValues?.get(1)?.let {
+                                                    filter.add(it)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                println("YAMLCompoundValue $p2 $filter")
+                                handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
                             }
                         }
 
                         // - a
                         is YAMLSequenceItem -> {
-                            t = 2
+                            prefix = ""
                             val p1 = parent.parent
                             if (p1 is YAMLSequence) {
                                 val p2 = p1.parent
                                 if (p2 is YAMLKeyValue) {
-                                    handleKey(p2.keyText, t, result)
+                                    val filter = mutableListOf<String>()
+                                    var key = p2.keyText
+                                    val p3 = p2.parent
+                                    if (key == COMPOSES && p3 is YAMLMapping) {
+                                        val p4 = p3.parent
+                                        if (p4 is YAMLKeyValue) {
+                                            key = p4.keyText
+                                            filter.add(COMPOSES)
+                                            p1.items.forEach { item ->
+                                                val v = item.value
+                                                if (v is YAMLMapping) {
+                                                    v.keyValues.forEach {
+                                                        filter.add(it.keyText)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    println("YAMLSequenceItem $p3")
+                                    handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
                                 }
                             }
                         }
@@ -231,5 +354,4 @@ internal class P1CompletionContributor : CompletionContributor() {
         }
         return false
     }
-
 }

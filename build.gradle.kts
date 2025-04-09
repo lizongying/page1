@@ -35,8 +35,8 @@ intellijPlatform {
     pluginConfiguration {
         id = "page1"
         name = "Page1"
-        version = "0.0.1"
-        description = "A tool for generating HTML using YAML templates."
+        version = "0.0.3"
+        description = "Page1 is an HTML generation tool that uses YAML-like files to describe HTML structure, allowing easy conversion to HTML files."
         changeNotes =
             """
       """.trimIndent()

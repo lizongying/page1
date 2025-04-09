@@ -1,7 +1,6 @@
 package com.lizongying.language.actions
 
 import com.intellij.ide.IdeBundle
-import com.intellij.ide.actions.OpenInRightSplitAction.Companion.openInRightSplit
 import com.intellij.ide.browsers.WebBrowserManager
 import com.intellij.ide.browsers.WebBrowserService
 import com.intellij.ide.browsers.WebBrowserUrlProvider.BrowserException
@@ -12,12 +11,15 @@ import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
-import com.intellij.openapi.fileEditor.impl.FileEditorOpenOptions
+import com.intellij.openapi.fileEditor.impl.EditorWindow
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.pom.Navigatable
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.ui.loadSmallApplicationIcon
 import com.intellij.ui.scale.ScaleContext
@@ -27,7 +29,6 @@ import com.intellij.util.concurrency.SynchronizedClearableLazy
 import com.lizongying.language.Utils.processYamlFileToHtml
 import com.lizongying.language.psi.P1File
 import java.awt.event.ActionEvent
-import javax.swing.SwingUtilities
 
 class OpenHtmlInEmbeddedBrowserAction : DumbAwareAction(
     IdeBundle.messagePointer("action.open.web.preview.text"),
@@ -43,16 +44,8 @@ class OpenHtmlInEmbeddedBrowserAction : DumbAwareAction(
             if (virtualFile != null) {
                 val vFile = getOrCreateVirtualFile(virtualFile)
                 if (vFile != null) {
-                    if (!ApplicationManager.getApplication().isWriteThread) {
-                        ApplicationManager.getApplication().invokeLater({
-                            ApplicationManager.getApplication().runWriteAction {
-                                processYamlFileToHtml(project, psiFile as P1File, vFile)
-                            }
-                        }, ModalityState.defaultModalityState())
-                    } else {
-                        ApplicationManager.getApplication().runWriteAction {
-                            processYamlFileToHtml(project, psiFile as P1File, vFile)
-                        }
+                    ApplicationManager.getApplication().runWriteAction {
+                        processYamlFileToHtml(project, psiFile as P1File, vFile)
                     }
                     PsiManager.getInstance(project).findFile(vFile)?.let {
                         psiFile = it
@@ -75,15 +68,32 @@ class OpenHtmlInEmbeddedBrowserAction : DumbAwareAction(
                             null,
                             false
                         )
-                    } else {
-                        FileEditorManagerEx.getInstanceEx(project)
-                            .openFile(file, null, FileEditorOpenOptions().withReuseOpen())
                     }
                 }
             }
         } catch (e: BrowserException) {
             Messages.showErrorDialog(e.message, IdeBundle.message("browser.error"))
         }
+    }
+
+    private fun openInRightSplit(
+        project: Project,
+        file: VirtualFile,
+        element: Navigatable? = null,
+        requestFocus: Boolean = true
+    ): EditorWindow? {
+        val fileEditorManager = FileEditorManagerEx.getInstanceEx(project)
+        if (!fileEditorManager.canOpenFile(file)) {
+            element?.navigate(requestFocus)
+            return null
+        }
+
+        val editorWindow = fileEditorManager.splitters.openInRightSplit(file, requestFocus) ?: return null
+
+        if (element != null && element !is PsiFile) {
+            ApplicationManager.getApplication().invokeLater({ element.navigate(requestFocus) }, project.disposed)
+        }
+        return editorWindow
     }
 
     override fun update(e: AnActionEvent) {
