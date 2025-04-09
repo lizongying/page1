@@ -54,6 +54,8 @@
         <applicationConfigurable
                 instance="com.lizongying.language.settings.P1PluginConfigurable"
                 displayName="Page1 Settings"/>
+
+        <typedHandler implementation="com.lizongying.language.P1TypedHandlerDelegate"/>
     </extensions>
 
     <actions>

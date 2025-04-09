@@ -4,7 +4,6 @@ import com.intellij.codeInsight.completion.CompletionContributor
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.psi.PsiElement
 import com.lizongying.language.tags.*
 import com.lizongying.language.tags.Element.Companion.selfClosingTags
 import com.lizongying.language.tags.Tags.COMPOSES
@@ -75,16 +74,19 @@ internal class P1CompletionContributor : CompletionContributor() {
                 )
             }
 
-            htmlTagPropertyMap[COMPOSES]?.add(
-                Tag(
-                    element.label,
-                    element.stage,
-                    Type.ELEMENT,
-                    element.desc,
-                    element.descCN,
-                    element.descTW
+//            if (element !in Element.filter.filter { it != Element.BODY }) {
+            if (element !in Element.filter) {
+                htmlTagPropertyMap[COMPOSES]?.add(
+                    Tag(
+                        element.label,
+                        element.stage,
+                        Type.ELEMENT,
+                        element.desc,
+                        element.descCN,
+                        element.descTW
+                    )
                 )
-            )
+            }
 
             // add event
             Event.all.forEach {
@@ -237,6 +239,7 @@ internal class P1CompletionContributor : CompletionContributor() {
                         }
 
                         is YAMLSequence -> {
+                            println("YAMLSequence $parent ${parent.parent}")
                             val p1 = parent.parent
                             if (p1 is YAMLKeyValue) {
                                 val filter = mutableListOf<String>()
@@ -249,7 +252,12 @@ internal class P1CompletionContributor : CompletionContributor() {
                                     }
                                 }
 
-                                println("YAMLSequence $p2 $filter")
+                                handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
+                            }
+
+                            if (p1 is YAMLDocument) {
+                                val filter = mutableListOf<String>()
+                                val key = COMPOSES
                                 handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
                             }
                         }
@@ -287,19 +295,16 @@ internal class P1CompletionContributor : CompletionContributor() {
                                         val p4 = p3.parent
                                         if (p4 is YAMLKeyValue) {
                                             key = p4.keyText
-//                                            filter.add(COMPOSES)
-//                                            p1.items.forEach { item ->
-//                                                val v = item.value
-//                                                if (v is YAMLMapping) {
-//                                                    v.keyValues.forEach {
-//                                                        filter.add(it.keyText)
-//                                                    }
-//                                                }
-//                                            }
                                         }
                                     }
 
                                     println("YAMLSequenceItem $p3")
+                                    handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
+                                }
+
+                                if (p2 is YAMLDocument) {
+                                    val filter = mutableListOf<String>()
+                                    val key = COMPOSES
                                     handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
                                 }
                             }
@@ -316,13 +321,5 @@ internal class P1CompletionContributor : CompletionContributor() {
                 }
             }
         }
-    }
-
-    // 如果是-，则返回 true，触发补全
-    override fun invokeAutoPopup(position: PsiElement, typeChar: Char): Boolean {
-        if (typeChar == '-') {
-            return true
-        }
-        return false
     }
 }
