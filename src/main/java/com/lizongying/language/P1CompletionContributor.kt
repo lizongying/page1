@@ -12,16 +12,9 @@ import org.jetbrains.yaml.psi.impl.YAMLPlainTextImpl
 
 
 internal class P1CompletionContributor : CompletionContributor() {
-    private val htmlTagPropertyMap = mutableMapOf(
-        "div" to mutableSetOf(Tags.clas, Tags.id, Tags.style),
-        "p" to mutableSetOf(Tags.clas, Tags.id, Tags.style),
-        "a" to mutableSetOf(Tags.clas, Tags.id, Tags.style, Tags.href, Tags.target),
-
+    private val htmlTagPropertyMap: MutableMap<String, MutableSet<Tag>> = mutableMapOf(
+        "" to mutableSetOf(),
         COMPOSES to mutableSetOf(),
-
-        "html" to mutableSetOf(Tags.style),
-        "head" to mutableSetOf(Tags.style),
-        "body" to mutableSetOf(Tags.style),
     )
 
     init {
@@ -88,6 +81,17 @@ internal class P1CompletionContributor : CompletionContributor() {
                 )
             }
 
+            htmlTagPropertyMap[""]?.add(
+                Tag(
+                    element.label,
+                    element.stage,
+                    Type.ELEMENT,
+                    element.desc,
+                    element.descCN,
+                    element.descTW
+                )
+            )
+
             // add event
             Event.all.forEach {
                 htmlTagPropertyMap[element.label]?.add(
@@ -115,6 +119,75 @@ internal class P1CompletionContributor : CompletionContributor() {
                     )
                 )
             }
+
+            Attribute.all.forEach {
+                if (it.parents.isEmpty()) {
+                    htmlTagPropertyMap[element.label]?.add(
+                        Tag(
+                            it.label,
+                            it.stage,
+                            Type.ATTRIBUTE,
+                            it.desc,
+                            it.descCN,
+                            it.descTW
+                        )
+                    )
+                } else {
+                    if (it.parents.contains(element)) {
+                        htmlTagPropertyMap[element.label]?.add(
+                            Tag(
+                                it.label,
+                                it.stage,
+                                Type.ATTRIBUTE,
+                                it.desc,
+                                it.descCN,
+                                it.descTW
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        // add event
+        Event.all.forEach {
+            htmlTagPropertyMap[""]?.add(
+                Tag(
+                    it.label,
+                    it.stage,
+                    Type.ATTRIBUTE,
+                    it.desc,
+                    it.descCN,
+                    it.descTW
+                )
+            )
+        }
+
+        // add GlobalAttribute
+        GlobalAttribute.all.forEach {
+            htmlTagPropertyMap[""]?.add(
+                Tag(
+                    it.label,
+                    it.stage,
+                    Type.ATTRIBUTE,
+                    it.desc,
+                    it.descCN,
+                    it.descTW
+                )
+            )
+        }
+
+        Attribute.all.forEach {
+            htmlTagPropertyMap[""]?.add(
+                Tag(
+                    it.label,
+                    it.stage,
+                    Type.ATTRIBUTE,
+                    it.desc,
+                    it.descCN,
+                    it.descTW
+                )
+            )
         }
     }
 
@@ -308,6 +381,10 @@ internal class P1CompletionContributor : CompletionContributor() {
                                     handleKey(key, prefix, listOf(Type.ELEMENT), filter, result)
                                 }
                             }
+                        }
+
+                        is YAMLDocument -> {
+                            handleKey("", prefix, listOf(Type.ELEMENT, Type.ATTRIBUTE), emptyList(), result)
                         }
 
                         else -> {

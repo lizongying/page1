@@ -33,16 +33,16 @@ intellijPlatform {
     pluginConfiguration {
         id = "page1"
         name = "Page1"
-        version = "0.0.6"
+        version = "0.0.7"
         description =
             "Page1 is an HTML generation tool that uses YAML-like files to describe HTML structure, allowing easy conversion to HTML files."
         changeNotes =
             """
-Allows omitting `html` and `body`.
+Add more attributes
       """.trimIndent()
 
         ideaVersion {
-            sinceBuild = "223"
+            sinceBuild = "233"
             untilBuild = provider { null }
         }
         vendor {
