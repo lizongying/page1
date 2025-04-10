@@ -6,16 +6,10 @@ enum class GlobalAttribute(
     val parents: List<Element> = emptyList(),
     val desc: String = "",
     val descCN: String = "",
-    val descTW: String = ""
+    val descTW: String = "",
+    val field: Field = Field.STRING
 ) {
-    ACCESSKEY(
-        "accesskey",
-        Stage.NORMAL,
-        emptyList(),
-        "Provides a hint for generating a keyboard shortcut for the current element. This attribute consists of a space-separated list of characters. The browser should use the first one that exists on the computer keyboard layout.",
-        "为当前元素提供一个生成键盘快捷键的提示。该属性由一个空格分隔的字符列表组成。浏览器应该使用计算机键盘布局上存在的第一个字符。",
-        "爲當前元素提供一個生成鍵盤快捷鍵的提示。該屬性由一個空格分隔的字符列表組成。瀏覽器應該使用計算機鍵盤布局上存在的第一個字符。",
-    ),
+
     ANCHOR(
         "anchor",
         Stage.NON_STANDARD,
@@ -24,14 +18,7 @@ enum class GlobalAttribute(
         "将一个定位元素与一个锚点元素关联。该属性的值是你希望将定位元素锚定到的元素的id值。然后，可以使用CSS锚点定位来定位该元素。",
         "將一個定位元素與一個錨點元素關聯。該屬性的值是你希望將定位元素錨定到的元素的id值。然後，可以使用CSS錨點定位來定位該元素。",
     ),
-    AUTOCAPITALIZE(
-        "autocapitalize",
-        Stage.NORMAL,
-        emptyList(),
-        "Controls whether inputted text is automatically capitalized and, if so, in what manner.",
-        "控制用户的文本输入是否和如何自动大写，它可以有以下的值：\noff 或 none，不应用自动大写（所有字母都默认为小写字母）。\non 或 sentences，每个句子的第一个字母默认为大写字母所有的字母都应该默认为大写。",
-        "控制用户的文本輸入是否和如何自動大寫，它可以有以下的值：\noff 或 none，不應用自動大寫（所有字母都默認爲小寫字母）。\non 或 sentences，每個句子的第一個字母默認爲大寫字母所有的字母都應該默認爲大寫。",
-    ),
+
     AUTOCORRECT(
         "autocorrect",
         Stage.NORMAL,
@@ -48,54 +35,7 @@ enum class GlobalAttribute(
         "表示一个元素将在页面加载时自动聚焦，或者在其所属的 <dialog> 显示时被聚焦。该属性是一个布尔值，初始化为 false。",
         "表示一個元素將在頁面加載時自動聚焦，或者在其所屬的 <dialog> 顯示時被聚焦。該屬性是一個布爾值，初始化爲 false。",
     ),
-    CLASS(
-        "class",
-        Stage.NORMAL,
-        emptyList(),
-        "A space-separated list of the classes of the element. Classes allow CSS and JavaScript to select and access specific elements via the class selectors or functions like the method Document.getElementsByClassName().",
-        "一个以空格分隔的元素的类名列表，它允许 CSS 和 Javascript 通过类选择器或 DOM 方法 Document.getElementsByClassName() 来选择和访问特定的元素。",
-        "一個以空格分隔的元素的類名列表，它允許 CSS 和 Javascript 通過類選擇器或 DOM 方法 Document.getElementsByClassName() 來選擇和訪問特定的元素。",
-    ),
-    CONTENTEDITABLE(
-        "contenteditable",
-        Stage.NORMAL,
-        emptyList(),
-        "An enumerated attribute indicating if the element should be editable by the user. If so, the browser modifies its widget to allow editing. The attribute must take one of the following values:\ntrue or the empty string, which indicates that the element must be editable;\nfalse, which indicates that the element must not be editable.\nplaintext-only, which indicates the element's raw text is editable, but rich text formatting is disabled.",
-        "一个枚举属性，表示元素是否可被用户编辑。如果可以，浏览器会调整元素的部件以允许编辑。该属性必须是下列值之一：\ntrue 或者空字符串，表明元素是可被编辑的；\nfalse，表明元素不能被编辑。",
-        "一個枚舉屬性，表示元素是否可被用户編輯。如果可以，瀏覽器會調整元素的部件以允許編輯。該屬性必須是下列值之一：\ntrue 或者空字符串，表明元素是可被編輯的；\nfalse，表明元素不能被編輯。",
-    ),
-    DATA(
-        "data-",
-        Stage.NORMAL,
-        emptyList(),
-        "Forms a class of attributes, called custom data attributes, that allow proprietary information to be exchanged between the HTML and its DOM representation that may be used by scripts. All such custom data are available via the HTMLElement interface of the element the attribute is set on. The HTMLElement.dataset property gives access to them.",
-        "形成一类属性，称为自定义数据属性，允许在 HTML 和其 DOM 表示之间交换专有信息，可由脚本使用。所有这些自定义数据属性都可以通过所属元素的 HTMLElement 接口来访问。通过 HTMLElement.dataset 属性可以访问它们。",
-        "形成一類屬性，稱爲自定義數據屬性，允許在 HTML 和其 DOM 表示之間交换專有信息，可由脚本使用。所有這些自定義數據屬性都可以通過所屬元素的 HTMLElement 接口來訪問。通過 HTMLElement.dataset 屬性可以訪問它們。",
-    ),
-    DIR(
-        "dir",
-        Stage.NORMAL,
-        emptyList(),
-        "An enumerated attribute indicating the directionality of the element's text. It can have the following values:\nltr, which means left to right and is to be used for languages that are written from the left to the right (like English);\nrtl, which means right to left and is to be used for languages that are written from the right to the left (like Arabic);\nauto, which lets the user agent decide. It uses a basic algorithm as it parses the characters inside the element until it finds a character with a strong directionality, then it applies that directionality to the whole element.",
-        "一个指示元素中文本方向的枚举属性。它的取值如下：\nltr，指从左到右，用于那种从左向右书写的语言（比如英语）；\nrtl，指从右到左，用于那种从右向左书写的语言（比如阿拉伯语）；\nauto，指由用户代理决定方向。它在解析元素中字符时会运用一个基本算法，直到发现一个具有强方向性的字符，然后将这一方向应用于整个元素。",
-        "一個指示元素中文本方向的枚舉屬性。它的取值如下：\nltr，指從左到右，用于那种從左向右書寫的語言（比如英語）；\nrtl，指從右到左，用于那种從右向左書寫的語言（比如阿拉伯語）；\nauto，指由用户代理决定方向。它在解析元素中字符時會運用一個基本算法，直到發現一個具有强方向性的字符，然後將這一方向應用于整個元素。",
-    ),
-    DRAGGABLE(
-        "draggable",
-        Stage.NORMAL,
-        emptyList(),
-        "An enumerated attribute indicating whether the element can be dragged, using the Drag and Drop API. It can have the following values:\ntrue, which indicates that the element may be dragged\nfalse, which indicates that the element may not be dragged.",
-        "一种枚举属性，指示是否可以使用 Drag and Drop API 拖动元素。它可以有以下的值：\ntrue, 这表明元素可被拖动；\nfalse, 这表明元素不可被拖动。",
-        "一种枚舉屬性，指示是否可以使用 Drag and Drop API 拖動元素。它可以有以下的值：\ntrue, 這表明元素可被拖動；\nfalse, 這表明元素不可被拖動。",
-    ),
-    ENTERKEYHINT(
-        "enterkeyhint",
-        Stage.NORMAL,
-        emptyList(),
-        "Hints what action label (or icon) to present for the enter key on virtual keyboards.",
-        "提示在虚拟键盘上为回车键呈现什么动作标签（或图标）。",
-        "提示在虚擬鍵盤上爲回車鍵呈現什麽動作標簽（或圖標）。",
-    ),
+
     EXPORTPARTS(
         "exportparts",
         Stage.NORMAL,
@@ -104,22 +44,7 @@ enum class GlobalAttribute(
         "用于将隐藏部分从一个嵌套的影子树（shadow tree）中过渡性地导出到一个包含该树的常规树（light tree）中。",
         "用于將隱藏部分從一個嵌套的影子樹（shadow tree）中過渡性地導出到一個包含該樹的常規樹（light tree）中。",
     ),
-    HIDDEN(
-        "hidden",
-        Stage.NORMAL,
-        emptyList(),
-        "An enumerated attribute indicating that the element is not yet, or is no longer, relevant. For example, it can be used to hide elements of the page that can't be used until the login process has been completed. The browser won't render such elements. This attribute must not be used to hide content that could legitimately be shown.",
-        "一个枚举的属性，表示该元素还没有，或者不再相关。例如，它可以用来隐藏页面中的元素，这些元素在登录过程完成之前不能使用。浏览器不会渲染这样的元素。这个属性不能用来隐藏可以合法显示的内容。",
-        "一個枚舉的屬性，表示該元素還没有，或者不再相關。例如，它可以用來隱藏頁面中的元素，這些元素在登録過程完成之前不能使用。瀏覽器不會渲染這樣的元素。這個屬性不能用來隱藏可以合法顯示的内容。",
-    ),
-    ID(
-        "id",
-        Stage.NORMAL,
-        emptyList(),
-        "Defines a unique identifier (ID) which must be unique in the whole document. Its purpose is to identify the element when linking (using a fragment identifier), scripting, or styling (with CSS).",
-        "定义唯一标识符（ID），该标识符在整个文档中必须是唯一的。其目的是在链接（使用片段标识符），脚本或样式（使用 CSS）时标识元素。",
-        "定義唯一標識符（ID），該標識符在整個文檔中必須是唯一的。其目的是在鏈接（使用片段標識符），脚本或樣式（使用 CSS）時標識元素。",
-    ),
+
     INERT(
         "inert",
         Stage.NORMAL,
@@ -128,14 +53,7 @@ enum class GlobalAttribute(
         "一个布尔值，使浏览器忽略该元素的用户输入事件。在有点击事件的情况下很有用。",
         "一個布爾值，使瀏覽器忽略該元素的用户輸入事件。在有點擊事件的情况下很有用。",
     ),
-    INPUTMODE(
-        "inputmode",
-        Stage.NORMAL,
-        emptyList(),
-        "Provides a hint to browsers about the type of virtual keyboard configuration to use when editing this element or its contents. Used primarily on <input> elements, but is usable on any element while in contenteditable mode.",
-        "向浏览器提供有关在编辑此元素或其内容时要使用的虚拟键盘配置类型的提示。主要用于 <input> 元素，但在 contenteditable 模式下可用于任何元素。",
-        "向瀏覽器提供有關在編輯此元素或其内容時要使用的虚擬鍵盤配置類型的提示。主要用于 <input> 元素，但在 contenteditable 模式下可用于任何元素。",
-    ),
+
     IS(
         "is",
         Stage.NORMAL,
@@ -152,14 +70,7 @@ enum class GlobalAttribute(
         "项的唯一全局标识符。",
         "項的唯一全局標識符。",
     ),
-    ITEMPROP(
-        "itemprop",
-        Stage.NORMAL,
-        emptyList(),
-        "Used to add properties to an item. Every HTML element may have an itemprop attribute specified, where an itemprop consists of a name and value pair.",
-        "用于向项添加属性。每个 HTML 元素都可以指定一个 itemprop 属性，其中 itemprop 由一个名称和值对组成。",
-        "用于向項添加屬性。每個 HTML 元素都可以指定一個 itemprop 屬性，其中 itemprop 由一個名稱和值對組成。",
-    ),
+
     ITEMREF(
         "itemref",
         Stage.NORMAL,
@@ -184,14 +95,7 @@ enum class GlobalAttribute(
         "指定将用于在数据结构中定义 itemprops（项属性）的词汇表的 URL。itemscope 用于设置数据结构中按 itemtype 设置的词汇表的生效范围。",
         "指定將用于在數據結構中定義 itemprops（項屬性）的詞匯表的 URL。itemscope 用于設置數據結構中按 itemtype 設置的詞匯表的生效范圍。",
     ),
-    LANG(
-        "lang",
-        Stage.NORMAL,
-        emptyList(),
-        "Helps define the language of an element: the language that non-editable elements are in, or the language that editable elements should be written in by the user. The attribute contains one \"language tag\" (made of hyphen-separated \"language subtags\") in the format defined in RFC 5646: Tags for Identifying Languages (also known as BCP 47). xml:lang has priority over it.",
-        "帮助定义元素的语言：不可编辑元素所在的语言，或者应该由用户编写的可编辑元素的语言。该属性包含一个“语言标记”（由用连字符分隔的“语言子标记”组成），格式在 RFC 5646: Tags for Identifying Languages（也称为 BCP 47） 中定义。xml:lang 优先于它。",
-        "幫助定義元素的語言：不可編輯元素所在的語言，或者應該由用户編寫的可編輯元素的語言。該屬性包含一個“語言標記”（由用連字符分隔的“語言子標記”組成），格式在 RFC 5646: Tags for Identifying Languages（也稱爲 BCP 47） 中定義。xml:lang 優先于它。",
-    ),
+
     NONCE(
         "nonce",
         Stage.NORMAL,
@@ -216,62 +120,7 @@ enum class GlobalAttribute(
         "用于将某个元素指定为弹出式元素（详见 Popover API）。弹出式元素通过 display: none 隐藏，直到通过调用/控制元素（即 <button> 或 <input type=\"button\"> 带有 popovertarget 属性）或 HTMLElement.showPopover() 调用而打开。",
         "用于將某個元素指定爲彈出式元素（詳見 Popover API）。彈出式元素通過 display: none 隱藏，直到通過調用/控制元素（即 <button> 或 <input type=\"button\"> 帶有 popovertarget 屬性）或 HTMLElement.showPopover() 調用而打開。",
     ),
-    ROLE(
-        "role",
-        Stage.NORMAL,
-        emptyList(),
-        "Roles define the semantic meaning of content, allowing screen readers and other tools to present and support interaction with an object in a way that is consistent with user expectations of that type of object. roles are added to HTML elements using role=\"role_type\", where role_type is the name of a role in the ARIA specification.",
-        "Role 定义了内容的语义，允许屏幕阅读器和其他工具以符合用户对该类型对象的期望的方式来展示和支持与该对象的互动。roles 以 role=\"role_type\" 的形式添加到 HTML 元素中，其中 role_type 是 ARIA 规范中的一个角色名称。",
-        "Role 定義了内容的語義，允許屏幕閲讀器和其他工具以符合用户對該類型對象的期望的方式來展示和支持與該對象的互動。roles 以 role=\"role_type\" 的形式添加到 HTML 元素中，其中 role_type 是 ARIA 規范中的一個角色名稱。",
-    ),
-    SLOT(
-        "slot",
-        Stage.NORMAL,
-        emptyList(),
-        "Assigns a slot in a shadow DOM shadow tree to an element: An element with a slot attribute is assigned to the slot created by the <slot> element whose name attribute's value matches that slot attribute's value.",
-        "将影子 DOM 影子树中的一个空槽分配给一个元素：具有 slot 属性的元素被分配给由 <slot> 元素创建的空槽，其 name 属性的值与 slot 属性的值匹配。",
-        "將影子 DOM 影子樹中的一個空槽分配給一個元素：具有 slot 屬性的元素被分配給由 <slot> 元素創建的空槽，其 name 屬性的值與 slot 屬性的值匹配。",
-    ),
-    SPELLCHECK(
-        "spellcheck",
-        Stage.NORMAL,
-        emptyList(),
-        "An enumerated attribute defines whether the element may be checked for spelling errors. It may have the following values:\nempty string or true, which indicates that the element should be, if possible, checked for spelling errors;\nfalse, which indicates that the element should not be checked for spelling errors.",
-        "枚举属性，定义是否可以检查元素是否存在拼写错误。它可能具有以下值：\ntrue 或空字符串，表示如果可能，应检查元素是否存在拼写错误；\nfalse，表示不应检查元素的拼写错误。",
-        "枚舉屬性，定義是否可以檢查元素是否存在拼寫錯誤。它可能具有以下值：\ntrue 或空字符串，表示如果可能，應檢查元素是否存在拼寫錯誤；\nfalse，表示不應檢查元素的拼寫錯誤。",
-    ),
-    STYLE(
-        "style",
-        Stage.NORMAL,
-        emptyList(),
-        "Contains CSS styling declarations to be applied to the element. Note that it is recommended for styles to be defined in a separate file or files. This attribute and the <style> element have mainly the purpose of allowing for quick styling, for example for testing purposes.",
-        "含有要应用于元素的 CSS 样式声明。请注意，建议在单独的文件中定义样式。该属性和 <style> 元素主要用于快速添加样式，例如用于测试目的。",
-        "含有要應用于元素的 CSS 樣式聲明。請注意，建議在單獨的文件中定義樣式。該屬性和 <style> 元素主要用于快速添加樣式，例如用于測試目的。",
-    ),
-    TABINDEX(
-        "tabindex",
-        Stage.NORMAL,
-        emptyList(),
-        "An integer attribute indicating if the element can take input focus (is focusable), if it should participate to sequential keyboard navigation, and if so, at what position. It can take several values:\na negative value means that the element should be focusable, but should not be reachable via sequential keyboard navigation;\n0 means that the element should be focusable and reachable via sequential keyboard navigation, but its relative order is defined by the platform convention;\na positive value means that the element should be focusable and reachable via sequential keyboard navigation; the order in which the elements are focused is the increasing value of the tabindex. If several elements share the same tabindex, their relative order follows their relative positions in the document.",
-        "整数属性，指示元素是否可以获取输入焦点（可聚焦），是否应该参与顺序键盘导航，如果是，则表示哪个位置。它可以接受下列值之一：\n负值表示该元素应该是可聚焦的，但不应通过顺序序键盘导航可聚焦和可到达，但其相对顺序由平台约定定义;\n正值意味着元素应该可以通过顺序键盘导航进行聚焦和访问；元素聚焦的顺序是 tabindex 的增加值。如果多个元素共享相同的 tabindex，则它们的相对顺序遵循它们在文档中的相对位置。",
-        "整數屬性，指示元素是否可以穫取輸入焦點（可聚焦），是否應該參與順序鍵盤導航，如果是，則表示哪個位置。它可以接受下列值之一：\n負值表示該元素應該是可聚焦的，但不應通過順序序鍵盤導航可聚焦和可到達，但其相對順序由平臺約定定義;\n正值意味着元素應該可以通過順序鍵盤導航進行聚焦和訪問；元素聚焦的順序是 tabindex 的增加值。如果多個元素共享相同的 tabindex，則它們的相對順序遵循它們在文檔中的相對位置。",
-    ),
-    TITLE(
-        "title",
-        Stage.NORMAL,
-        emptyList(),
-        "Contains a text representing advisory information related to the element it belongs to. Such information can typically, but not necessarily, be presented to the user as a tooltip.",
-        "包含表示与其所属元素相关信息的文本。这些信息通常可以作为提示呈现给用户，但不是必须的。",
-        "包含表示與其所屬元素相關信息的文本。這些信息通常可以作爲提示呈現給用户，但不是必須的。",
-    ),
-    TRANSLATE(
-        "translate",
-        Stage.NORMAL,
-        emptyList(),
-        "An enumerated attribute that is used to specify whether an element's attribute values and the values of its Text node children are to be translated when the page is localized, or whether to leave them unchanged. It can have the following values:\nempty string or yes, which indicates that the element will be translated.\nno, which indicates that the element will not be translated.",
-        "枚举属性，用于指定在页面本地化时是否转换元素的属性值及其 Text 节点子节点的值，或者是否保持它们不变。它可以具有以下值：\n空字符串和 yes，表示元素将被翻译。\nno，表示该元素不会被翻译。",
-        "枚舉屬性，用于指定在頁面本地化時是否轉换元素的屬性值及其 Text 節點子節點的值，或者是否保持它們不變。它可以具有以下值：\n空字符串和 yes，表示元素將被翻譯。\nno，表示該元素不會被翻譯。",
-    ),
+
     VIRTUALKEYBOARDPOLICY(
         "virtualkeyboardpolicy",
         Stage.EXPERIMENTAL,
